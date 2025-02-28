@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import {
   ColumnDef,
   flexRender,
@@ -7,8 +7,8 @@ import {
   getPaginationRowModel,
   SortingState,
   getSortedRowModel,
-  ColumnFiltersState,
   getFilteredRowModel,
+  ColumnFiltersState,
 } from "@tanstack/react-table";
 import {
   Table,
@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ChevronLeft, ChevronRight, Search } from "lucide-react";
+import { useState } from "react";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -35,10 +35,8 @@ export function DataTable<TData, TValue>({
   searchColumn,
   searchPlaceholder = "Search...",
 }: DataTableProps<TData, TValue>) {
-  const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    [],
-  );
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
   const table = useReactTable({
     data,
@@ -58,31 +56,28 @@ export function DataTable<TData, TValue>({
   return (
     <div className="space-y-4">
       {searchColumn && (
-        <div className="flex items-center relative">
-          <Search className="absolute left-3 h-4 w-4 text-gray-400" />
+        <div className="flex items-center py-4">
           <Input
             placeholder={searchPlaceholder}
             value={
-              (table.getColumn(searchColumn)?.getFilterValue() as string) ?? ""
+              (table.getColumn(searchColumn)?.getFilterValue() as string) || ""
             }
             onChange={(event) =>
               table.getColumn(searchColumn)?.setFilterValue(event.target.value)
             }
-            className="pl-9 bg-black/40 border-white/10 text-white"
+            className="max-w-sm bg-white/5 border-white/10 text-white"
           />
         </div>
       )}
+
       <div className="rounded-md border border-white/10 overflow-hidden">
         <Table>
-          <TableHeader className="bg-black/40">
+          <TableHeader className="bg-white/5">
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow
-                key={headerGroup.id}
-                className="border-white/10 hover:bg-white/5"
-              >
+              <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead key={header.id} className="text-white">
+                    <TableHead key={header.id}>
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -101,10 +96,10 @@ export function DataTable<TData, TValue>({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
-                  className="border-white/10 hover:bg-white/5"
+                  className="hover:bg-white/5"
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id} className="text-white/80">
+                    <TableCell key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext(),
@@ -117,7 +112,7 @@ export function DataTable<TData, TValue>({
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className="h-24 text-center text-white/60"
+                  className="h-24 text-center"
                 >
                   No results.
                 </TableCell>
@@ -126,44 +121,26 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-between">
-        <div className="text-sm text-white/60">
-          Showing{" "}
-          {table.getState().pagination.pageIndex *
-            table.getState().pagination.pageSize +
-            1}{" "}
-          to{" "}
-          {Math.min(
-            (table.getState().pagination.pageIndex + 1) *
-              table.getState().pagination.pageSize,
-            table.getFilteredRowModel().rows.length,
-          )}{" "}
-          of {table.getFilteredRowModel().rows.length} entries
-        </div>
-        <div className="flex items-center space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-            className="border-white/10 text-white/80 hover:bg-white/5"
-          >
-            <ChevronLeft className="h-4 w-4" />
-          </Button>
-          <div className="text-sm text-white/80">
-            Page {table.getState().pagination.pageIndex + 1} of{" "}
-            {table.getPageCount()}
-          </div>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-            className="border-white/10 text-white/80 hover:bg-white/5"
-          >
-            <ChevronRight className="h-4 w-4" />
-          </Button>
-        </div>
+
+      <div className="flex items-center justify-end space-x-2 py-4">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => table.previousPage()}
+          disabled={!table.getCanPreviousPage()}
+          className="border-white/10 hover:bg-white/5"
+        >
+          Previous
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => table.nextPage()}
+          disabled={!table.getCanNextPage()}
+          className="border-white/10 hover:bg-white/5"
+        >
+          Next
+        </Button>
       </div>
     </div>
   );

@@ -20,10 +20,9 @@ import {
 import DataForm from "../common/DataForm";
 import { useCustomToast } from "../common/Toast";
 import type { Student } from "@/lib/db/schema";
-import StudentTable from "./StudentTable";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Grid } from "@/components/ui/grid";
 import { cn } from "@/lib/utils";
+import StudentTable from "./StudentTable";
 
 const StudentList = () => {
   const [students, setStudents] = useState<Student[]>([]);

@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import CurrentDateTime from "./common/CurrentDateTime";
 import MetricsGrid from "./dashboard/MetricsGrid";
 import DataVisualizer from "./dashboard/DataVisualizer";
-import DashboardCalendar from "./dashboard/DashboardCalendar";
-import QuickActions from "./dashboard/QuickActions";
+// import DashboardCalendar from "./dashboard/DashboardCalendar";
+// import QuickActions from "./dashboard/QuickActions";
 import ThemeCustomizer from "./theme/ThemeCustomizer";
 import { motion } from "framer-motion";
 import { UserRole } from "@/lib/roles";
@@ -54,19 +54,9 @@ const Home = ({
         {/* Metrics Grid */}
         <MetricsGrid />
 
-        {/* Quick Actions and Data Visualizer */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-1">
-            <QuickActions />
-          </div>
-          <div className="lg:col-span-2 h-[400px]">
-            <DataVisualizer />
-          </div>
-        </div>
-
-        {/* Calendar */}
+        {/* Data Visualizer */}
         <div className="h-[400px]">
-          <DashboardCalendar />
+          <DataVisualizer />
         </div>
       </motion.div>
     </div>

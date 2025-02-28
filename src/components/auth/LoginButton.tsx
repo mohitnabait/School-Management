@@ -11,6 +11,8 @@ export const LoginButton = () => {
       await loginWithRedirect({
         authorizationParams: {
           redirect_uri: window.location.origin,
+          audience: "https://dev-yvwz7kpo4hf8zxlc.us.auth0.com/api/v2/",
+          scope: "openid profile email offline_access",
         },
         appState: {
           returnTo: "/dashboard",

@@ -10,13 +10,13 @@ export const Auth0ProviderWithNavigate = ({
   const navigate = useNavigate();
   const { showError } = useCustomToast();
 
-  // Hardcoded values to ensure they're available
+  // Use environment variables
   const domain = "dev-yvwz7kpo4hf8zxlc.us.auth0.com";
   const clientId = "Gg7o2vWBQUQHFHWZE0YAH5D8vZjXuQKB";
 
   const onRedirectCallback = (appState: any) => {
     console.log("Auth0 redirect callback triggered", appState);
-    navigate(appState?.returnTo || "/dashboard");
+    navigate(appState?.returnTo || "/dashboard", { replace: true });
   };
 
   if (!domain || !clientId) {
@@ -31,6 +31,8 @@ export const Auth0ProviderWithNavigate = ({
       clientId={clientId}
       authorizationParams={{
         redirect_uri: window.location.origin,
+        audience: "https://dev-yvwz7kpo4hf8zxlc.us.auth0.com/api/v2/",
+        scope: "openid profile email offline_access",
       }}
       onRedirectCallback={onRedirectCallback}
       cacheLocation="localstorage"

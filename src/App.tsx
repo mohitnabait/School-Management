@@ -1,6 +1,5 @@
 import { Suspense, useEffect, useState } from "react";
 import {
-  useRoutes,
   Routes,
   Route,
   useLocation,
@@ -26,6 +25,10 @@ import Settings from "./components/settings/Settings";
 import AuthPage from "./components/auth/AuthPage";
 import { Toast } from "./components/common/Toast";
 import MainLayout from "./components/layout/MainLayout";
+import AboutPage from "./components/about/AboutPage";
+import ContactPage from "./components/contact/ContactPage";
+import PricingPage from "./components/pricing/PricingPage";
+import FeaturesPage from "./components/features/FeaturesPage";
 
 interface HomeProps {
   userRole: UserRole;
@@ -45,9 +48,12 @@ function App() {
 
   useEffect(() => {
     // Redirect to dashboard if authenticated
-    if (isAuthenticated && location.pathname === "/") {
+    if (
+      isAuthenticated &&
+      (location.pathname === "/" || location.pathname === "/auth")
+    ) {
       console.log("User is authenticated, redirecting to dashboard");
-      navigate("/dashboard");
+      navigate("/dashboard", { replace: true });
     }
   }, [isAuthenticated, location.pathname, navigate]);
 
@@ -70,6 +76,23 @@ function App() {
     console.log("User is not authenticated, showing landing page or auth page");
     if (location.pathname === "/auth") {
       return <AuthPage />;
+    }
+    // Allow access to public pages
+    if (
+      ["/about", "/contact", "/pricing", "/features"].includes(
+        location.pathname,
+      )
+    ) {
+      return (
+        <Suspense fallback={<LoadingAnimation />}>
+          <Routes location={location}>
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/contact" element={<ContactPage />} />
+            <Route path="/pricing" element={<PricingPage />} />
+            <Route path="/features" element={<FeaturesPage />} />
+          </Routes>
+        </Suspense>
+      );
     }
     if (location.pathname !== "/") {
       // Redirect to home if trying to access protected routes
@@ -94,6 +117,12 @@ function App() {
         <Routes location={location}>
           <Route path="/dashboard" element={<Home userRole={userRole} />} />
           <Route path="/auth" element={<AuthPage />} />
+
+          {/* Public Routes */}
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/contact" element={<ContactPage />} />
+          <Route path="/pricing" element={<PricingPage />} />
+          <Route path="/features" element={<FeaturesPage />} />
 
           {/* Student Routes */}
           <Route
@@ -162,7 +191,7 @@ function App() {
           {/* Fallback route */}
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>
-        {import.meta.env.VITE_TEMPO === "true" && useRoutes(routes)}
+        {/* Tempo routes are handled separately */}
       </Suspense>
     </MainLayout>
   );
